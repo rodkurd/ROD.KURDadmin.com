@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>پانێلی ئەدمین — بازاڕی کوردستان</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060810;--bg2:#0b0e18;--card:#111825;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --gold:#f0a500;--gold2:#ffbf33;
+  --grad:linear-gradient(135deg,#f0a500,#f59e0b,#ffbf33);
+  --text:#e8eeff;--text2:#7a8599;--text3:#3a4558;
+  --green:#10b981;--red:#ef4444;--blue:#3b82f6;--orange:#f97316;
+  --sidebar-w:230px;--topbar-h:58px;--bot-h:62px;
+  --r:16px;--r2:13px;--r3:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{font-family:'Noto Naskh Arabic',serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;overflow-x:hidden}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:rgba(240,165,0,.2);border-radius:4px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 10%,rgba(240,165,0,.04) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* ─── LAYOUT ─── */
+.layout{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* ─── SIDEBAR ─── */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;right:0;bottom:0;z-index:300;overflow-y:auto;transition:transform .3s ease}
+.s-head{padding:18px 14px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;flex-shrink:0}
+.s-logo{width:36px;height:36px;background:var(--grad);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 4px 14px rgba(240,165,0,.3)}
+.s-brand{font-size:.88rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.25}
+.s-brand small{display:block;font-size:.62rem;font-weight:500;-webkit-text-fill-color:var(--text3);color:var(--text3)}
+.s-nav{flex:1;padding:10px 8px}
+.s-sec{margin-bottom:18px}
+.s-lbl{font-size:.62rem;font-weight:700;color:var(--text3);padding:0 8px;margin-bottom:5px;letter-spacing:.5px}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:11px;cursor:pointer;transition:all .2s;margin-bottom:2px;color:var(--text2);font-size:.84rem;font-weight:500;position:relative;-webkit-user-select:none}
+.ni:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.ni.active{background:rgba(240,165,0,.1);color:var(--gold)}
+.ni.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--grad);border-radius:0 3px 3px 0}
+.ni-icon{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.ni-badge{margin-right:auto;font-size:.62rem;font-weight:700;padding:2px 6px;border-radius:50px;min-width:18px;text-align:center}
+.nb-red{background:var(--red);color:#fff}
+.nb-gold{background:rgba(240,165,0,.15);color:var(--gold);border:1px solid rgba(240,165,0,.3)}
+.s-foot{padding:12px 10px;border-top:1px solid var(--border);flex-shrink:0}
+.admin-chip{display:flex;align-items:center;gap:8px;padding:9px;background:var(--card);border:1px solid var(--border);border-radius:11px}
+.admin-av{width:32px;height:32px;background:var(--grad);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#000;font-size:.85rem;flex-shrink:0}
+.admin-name{font-size:.8rem;font-weight:700}
+.admin-role{font-size:.65rem;color:var(--text3)}
+
+/* ─── MAIN ─── */
+.main{flex:1;margin-right:var(--sidebar-w);display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:var(--topbar-h);background:rgba(6,8,16,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:200;flex-shrink:0}
+.topbar-left{font-size:1rem;font-weight:800;display:flex;align-items:center;gap:8px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.t-search{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 12px}
+.t-search input{background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:.82rem;width:160px;direction:rtl}
+.t-search input::placeholder{color:var(--text3)}
+/* Mobile toggle */
+.mob-toggle{display:none;width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:9px;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;flex-shrink:0}
+
+.content{flex:1;padding:20px;overflow-y:auto}
+
+/* ─── PAGES ─── */
+.pg{display:none;animation:fadeUp .3s ease}
+.pg.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── STAT CARDS ─── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;transition:all .22s}
+.sc:hover{border-color:rgba(240,165,0,.2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sc-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.i-g{background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.2)}
+.i-gr{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.2)}
+.i-b{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.2)}
+.i-o{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.2)}
+.sc-delta{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:50px}
+.d-up{background:rgba(16,185,129,.1);color:var(--green)}
+.sc-num{font-size:1.7rem;font-weight:900;line-height:1;margin-bottom:3px}
+.sc-lbl{font-size:.74rem;color:var(--text2)}
+
+/* ─── SECTION HEAD ─── */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.sec-t{font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.sec-t::before{content:'';width:3px;height:16px;background:var(--grad);border-radius:3px;flex-shrink:0}
+
+/* ─── TABLE ─── */
+.tbl{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;overflow-x:auto}
+.tbl-hd{display:grid;padding:11px 18px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);font-size:.7rem;font-weight:700;color:var(--text3);min-width:fit-content;width:100%}
+.tbl-row{display:grid;padding:13px 18px;border-bottom:1px solid var(--border);align-items:center;transition:background .15s;cursor:pointer;min-width:fit-content;width:100%}
+.tbl-row:last-child{border-bottom:none}
+.tbl-row:hover{background:rgba(255,255,255,.02)}
+.tc{font-size:.82rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc.m{color:var(--text2)}.tc.g{color:var(--gold);font-weight:700}
+/* col templates */
+.sel-t{grid-template-columns:2fr 1.6fr 1fr .9fr 1.4fr}
+.prod-t{grid-template-columns:2.5fr .9fr 1fr .9fr 1.3fr}
+.ord-t{grid-template-columns:1fr 2fr 1fr 1fr 1.3fr}
+.msg-t{grid-template-columns:2fr 2fr 1fr 1fr 1fr}
+
+/* ─── BADGE ─── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:50px;font-size:.68rem;font-weight:700;white-space:nowrap}
+.b-pend{background:rgba(240,165,0,.1);color:var(--gold);border:1px solid rgba(240,165,0,.25)}
+.b-appr{background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+.b-rej{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.b-new{background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.25)}
+.b-proc{background:rgba(249,115,22,.1);color:var(--orange);border:1px solid rgba(249,115,22,.25)}
+.b-done{background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+
+/* ─── ACTION BTNS ─── */
+.abtns{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.ab{padding:4px 10px;border-radius:7px;font-family:inherit;font-size:.7rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap}
+.ag{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25)}.ag:hover{background:var(--green);color:#000}
+.ar{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}.ar:hover{background:var(--red);color:#fff}
+.ao{background:rgba(240,165,0,.1);color:var(--gold);border:1px solid rgba(240,165,0,.25)}.ao:hover{background:var(--grad);color:#000}
+.ag2{background:rgba(255,255,255,.05);color:var(--text2);border:1px solid var(--border)}.ag2:hover{border-color:rgba(240,165,0,.3);color:var(--gold)}
+.ab2{background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.25)}.ab2:hover{background:var(--blue);color:#fff}
+
+/* ─── MODAL ─── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);z-index:1000;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.overlay.active{display:flex;animation:fdi .25s ease}
+@keyframes fdi{from{opacity:0}to{opacity:1}}
+.modal{background:var(--card);border:1px solid rgba(240,165,0,.15);border-radius:20px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;animation:pu .3s cubic-bezier(.34,1.2,.64,1);scrollbar-width:thin;scrollbar-color:var(--gold) transparent;margin:auto}
+@keyframes pu{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.mh{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--card);z-index:10;border-radius:20px 20px 0 0}
+.mh-title{font-size:1rem;font-weight:800}
+.mclose{width:30px;height:30px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;color:var(--text2);transition:all .2s;flex-shrink:0}
+.mclose:hover{background:rgba(239,68,68,.15);color:var(--red)}
+.mbody{padding:18px 20px}
+
+/* ─── CARD ID ─── */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.card-box{border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.card-lbl{padding:7px 12px;font-size:.7rem;font-weight:700;color:var(--text2);background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.card-img{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#131928,#0d1117);overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover}
+
+/* ─── INFO ROW ─── */
+.drow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:.83rem}
+.drow:not(:last-child){border-bottom:1px solid var(--border)}
+.dlbl{color:var(--text2)}.dval{font-weight:700;color:var(--text)}
+.dval.g{color:var(--gold)}.dval.gr{color:var(--green)}.dval.rd{color:var(--red)}
+
+/* ─── 4 IMAGE UPLOAD ─── */
+.img4-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.img4-box{aspect-ratio:1;border:2px dashed rgba(240,165,0,.22);border-radius:var(--r2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;background:rgba(255,255,255,.02)}
+.img4-box:hover,.img4-box.has-img{border-color:var(--gold);background:rgba(240,165,0,.05)}
+.img4-box input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.img4-prev{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none;border-radius:calc(var(--r2) - 2px)}
+.img4-del{position:absolute;top:4px;left:4px;width:20px;height:20px;background:var(--red);color:#fff;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:.7rem;cursor:pointer;z-index:5;border:none;font-family:inherit}
+.img4-num{font-size:.65rem;color:var(--text3);font-weight:600}
+.img4-ic{font-size:1.4rem;opacity:.5}
+
+/* ─── FORM ─── */
+.fg{margin-bottom:12px}
+.fl{display:block;font-size:.78rem;font-weight:600;color:var(--text2);margin-bottom:6px}
+.fi{width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r3);color:var(--text);font-family:inherit;font-size:.86rem;outline:none;transition:all .3s;direction:rtl}
+.fi:focus{border-color:var(--gold);background:rgba(240,165,0,.04);box-shadow:0 0 0 3px rgba(240,165,0,.08)}
+.fi::placeholder{color:var(--text3)}
+textarea.fi{min-height:80px;resize:vertical}
+select.fi{cursor:pointer}
+select.fi option{background:var(--card);color:var(--text)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ─── PENDING LIST ─── */
+.pend-list{display:flex;flex-direction:column;gap:9px}
+.pend-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px;display:flex;align-items:center;gap:12px;transition:all .2s;cursor:pointer}
+.pend-item:hover{border-color:rgba(240,165,0,.2)}
+.pav{width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:800;color:#000;font-size:.9rem;flex-shrink:0}
+.pinfo{flex:1;min-width:0}
+.pname{font-size:.88rem;font-weight:700}
+.pmeta{font-size:.72rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+
+/* ─── BTNS ─── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:10px;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border:none;transition:all .22s}
+.btn-gold{background:var(--grad);color:#000;box-shadow:0 4px 14px rgba(240,165,0,.25)}.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(240,165,0,.4)}
+.btn-out{background:transparent;color:var(--text2);border:1px solid var(--border)}.btn-out:hover{border-color:rgba(240,165,0,.35);color:var(--gold)}
+.btn-gr{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25)}.btn-gr:hover{background:var(--green);color:#000}
+.btn-rd{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}.btn-rd:hover{background:var(--red);color:#fff}
+
+/* ─── CHART ─── */
+.chart-bars{display:flex;align-items:flex-end;gap:7px;height:110px}
+.b-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.b-fill{width:100%;background:rgba(240,165,0,.15);border:1px solid rgba(240,165,0,.2);border-radius:5px 5px 0 0;transition:height .6s cubic-bezier(.34,1.2,.64,1);position:relative;min-height:3px}
+.b-fill:hover{background:rgba(240,165,0,.3)}
+.b-fill.hi{background:var(--grad);border-color:var(--gold);box-shadow:0 0 10px rgba(240,165,0,.3)}
+.b-val{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:.62rem;font-weight:700;color:var(--gold);white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none}
+.b-fill:hover .b-val{opacity:1}
+.b-lbl{font-size:.65rem;color:var(--text3)}
+
+/* ─── EMPTY ─── */
+.empty{text-align:center;padding:36px 20px;color:var(--text3)}
+.empty-ic{font-size:2.5rem;opacity:.35;margin-bottom:10px}
+.empty-tx{font-size:.82rem}
+
+/* ─── AV ROW ─── */
+.av-row{display:flex;align-items:center;gap:9px}
+.av-sm{width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:800;color:#000;font-size:.75rem;flex-shrink:0}
+.prog-bar{height:4px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-top:3px}
+.prog-fill{height:100%;border-radius:3px;background:var(--grad)}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:20px;left:16px;z-index:9999;background:var(--card);border:1px solid var(--border);border-bottom:3px solid var(--green);border-radius:11px;padding:11px 16px;font-size:.82rem;box-shadow:0 8px 30px rgba(0,0,0,.4);display:none;animation:ti .3s cubic-bezier(.34,1.2,.64,1);max-width:280px}
+@keyframes ti{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ─── LOGIN ─── */
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:fixed;inset:0;z-index:9000;background:var(--bg)}
+.lcard{background:var(--card);border:1px solid rgba(240,165,0,.15);border-radius:22px;padding:36px 28px;width:100%;max-width:390px;position:relative;overflow:hidden;box-shadow:0 0 50px rgba(240,165,0,.08),0 30px 70px rgba(0,0,0,.5)}
+.lcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+
+/* ─── MOBILE BOTTOM NAV (hidden on desktop) ─── */
+.mob-bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bot-h);background:rgba(6,8,16,.96);backdrop-filter:blur(20px);border-top:1px solid var(--border);z-index:400;align-items:center;justify-content:space-around;padding:0 4px;padding-bottom:env(safe-area-inset-bottom,0)}
+.mbn-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 10px;border-radius:10px;transition:all .2s;flex:1;max-width:65px;position:relative}
+.mbn-item.active{background:rgba(240,165,0,.08)}
+.mbn-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:color .2s}
+.mbn-lbl{font-size:.6rem;font-weight:600;color:var(--text3);transition:color .2s;text-align:center}
+.mbn-item.active .mbn-icon,.mbn-item.active .mbn-lbl{color:var(--gold)}
+.mbn-dot{position:absolute;top:4px;right:9px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--bg);display:none}
+
+/* ─── SIDEBAR OVERLAY (mobile) ─── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:250;backdrop-filter:blur(4px)}
+.sidebar-overlay.active{display:block}
+
+/* ─── RECIPIENTS ─── */
+.recip-list{max-height:150px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;margin-bottom:12px}
+.ri{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;transition:background .15s}
+.ri:hover,.ri.sel{background:rgba(240,165,0,.07)}
+.ri.sel{border-right:3px solid var(--gold)}
+.ri-cb{width:15px;height:15px;border-radius:4px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;transition:all .2s}
+.ri.sel .ri-cb{background:var(--gold);border-color:var(--gold);color:#000}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .sidebar{transform:translateX(100%)}
+  .sidebar.mob-open{transform:translateX(0)}
+  .main{margin-right:0}
+  .mob-toggle{display:flex}
+  .mob-bot-nav{display:flex}
+  .content{padding:14px;padding-bottom:calc(var(--bot-h) + 16px)}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .t-search{display:none}
+  .img4-grid{grid-template-columns:repeat(2,1fr)}
+  .sel-t,.prod-t,.ord-t,.msg-t{grid-template-columns:auto}
+}
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .frow{grid-template-columns:1fr}
+  .card-grid{grid-template-columns:1fr}
+  .lcard{padding:28px 20px}
+}
+@media(min-width:901px){
+  .mob-bot-nav{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ─── LOGIN ─── -->
+<div class="login-page" id="login-page">
+  <div class="lcard">
+    <div style="text-align:center;margin-bottom:22px">
+      <div style="width:58px;height:58px;background:var(--grad);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px;box-shadow:0 8px 26px rgba(240,165,0,.3)">⚙️</div>
+      <h2 style="font-size:1.4rem;font-weight:900">پانێلی ئەدمین</h2>
+      <p style="color:var(--text2);font-size:.82rem;margin-top:4px">بازاڕی کوردستان — سیستەمی بەڕێوەبردن</p>
+    </div>
+    <div class="fg"><label class="fl">ناوی بەکارهێنەر</label><input class="fi" type="text" id="l-u" value="admin"></div>
+    <div class="fg"><label class="fl">وشەی تێپەڕین</label><input class="fi" type="password" id="l-p" value="admin123"></div>
+    <button class="btn btn-gold" style="width:100%;padding:12px;margin-top:6px;font-size:.92rem" onclick="doLogin()">چوونەژوورەوە بۆ پانێل</button>
+    <p style="text-align:center;font-size:.7rem;color:var(--text3);margin-top:12px">admin / admin123</p>
+  </div>
+</div>
+
+<!-- ─── MAIN LAYOUT ─── -->
+<div class="layout" id="main-layout" style="display:none">
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="s-overlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="s-head">
+      <div class="s-logo">🛍️</div>
+      <div class="s-brand">بازاڕی کوردستان<small>پانێلی بەڕێوەبردن</small></div>
+    </div>
+    <nav class="s-nav">
+      <div class="s-sec">
+        <div class="s-lbl">سەرەکی</div>
+        <div class="ni active" onclick="goPg('pg-dash',this,'📊','داشبۆرد')"><span class="ni-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>داشبۆرد</div>
+      </div>
+      <div class="s-sec">
+        <div class="s-lbl">بەڕێوەبردن</div>
+        <div class="ni" onclick="goPg('pg-sellers',this,'👥','فرۆشیارەکان')"><span class="ni-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.5"/><path d="M2 20c0-3.3 3.1-6 7-6s7 2.7 7 6"/><circle cx="19" cy="8" r="2.5"/><path d="M16.5 20c0-2.2 1.3-4 3.5-4"/></svg></span>فرۆشیارەکان<span class="ni-badge nb-red" id="nb-pend">0</span></div>
+        <div class="ni" onclick="goPg('pg-products',this,'📦','کاڵاکان')"><span class="ni-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>کاڵاکان</div>
+        <div class="ni" onclick="goPg('pg-orders',this,'🧾','داواکاریەکان')"><span class="ni-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>داواکاریەکان<span class="ni-badge nb-gold" id="nb-ord">0</span></div>
+        <div class="ni" onclick="goPg('pg-messages',this,'✉️','نامەنێردن')"><span class="ni-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="14" y2="13"/></svg></span>نامەنێردن</div>
+      </div>
+      <div class="s-sec">
+        <div class="s-lbl">سیستەم</div>
+        <div class="ni" onclick="goPg('pg-settings',this,'⚙️','ڕێکخستنەکان')"><span class="ni-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>ڕێکخستنەکان</div>
+        <div class="ni" style="color:var(--red)" onclick="doLogout()"><span class="ni-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>دەرچوون</div>
+      </div>
+    </nav>
+    <div class="s-foot">
+      <div class="admin-chip"><div class="admin-av">A</div><div><div class="admin-name">سوپەر ئەدمین</div><div class="admin-role">بەڕێوەبەری سیستەم</div></div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="mob-toggle" onclick="openSidebar()">☰</div>
+        <span id="pg-icon">📊</span>
+        <span id="pg-title">داشبۆرد</span>
+      </div>
+      <div class="topbar-right">
+        <div class="t-search"><span style="color:var(--text3)">🔍</span><input type="text" placeholder="گەڕان..." id="main-srch" oninput="mainSearch(this.value)"></div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ═══ DASHBOARD ═══ -->
+      <div class="pg active" id="pg-dash">
+        <div class="stats-grid" id="dash-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:16px;margin-bottom:18px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px">
+            <div class="sec-hd"><div class="sec-t">فرۆشتنی ماڵانەی</div></div>
+            <div class="chart-bars" id="dash-chart"></div>
+            <div style="display:flex;justify-content:space-between;padding:7px 0 0;font-size:.65rem;color:var(--text3)" id="chart-lbls"></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px">
+            <div class="sec-hd"><div class="sec-t">چاوەڕوانی پەسەندکردن</div><span class="badge b-pend" id="pend-ct">٠</span></div>
+            <div class="pend-list" id="dash-pend"></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+            <div style="font-size:.76rem;color:var(--text2);font-weight:600;margin-bottom:11px">📈 باشترین فرۆشیارەکان</div>
+            <div id="top-sellers"></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+            <div style="font-size:.76rem;color:var(--text2);font-weight:600;margin-bottom:11px">📊 زانیاری سیستەم</div>
+            <div id="sys-info"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SELLERS ═══ -->
+      <div class="pg" id="pg-sellers">
+        <div class="sec-hd">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="ab ao" id="sf-all" onclick="filtSel('all',this)">هەمووی</button>
+            <button class="ab ag2" onclick="filtSel('pending',this)">⏳ چاوەڕوان</button>
+            <button class="ab ag2" onclick="filtSel('approved',this)">✓ پەسەندکراو</button>
+            <button class="ab ag2" onclick="filtSel('rejected',this)">✗ ڕەتکراو</button>
+          </div>
+        </div>
+        <div class="tbl">
+          <div class="tbl-hd sel-t"><div>فرۆشیار</div><div>ئیمەیڵ / مۆبایل</div><div>دۆخ</div><div>بەروار</div><div>کردار</div></div>
+          <div id="sellers-body"></div>
+        </div>
+      </div>
+
+      <!-- ═══ PRODUCTS ═══ -->
+      <div class="pg" id="pg-products">
+        <div class="sec-hd">
+          <div></div>
+          <button class="btn btn-gold" onclick="openAddProd()">+ زیادکردنی کاڵای نوێ</button>
+        </div>
+        <div class="tbl">
+          <div class="tbl-hd prod-t"><div>کاڵا</div><div>کاتیگۆری</div><div>نرخ</div><div>وێنەکان</div><div>کردار</div></div>
+          <div id="prods-body"></div>
+        </div>
+      </div>
+
+      <!-- ═══ ORDERS ═══ -->
+      <div class="pg" id="pg-orders">
+        <div class="tbl">
+          <div class="tbl-hd ord-t"><div>ژ.داواکاری</div><div>کاڵا / فرۆشیار</div><div>نرخ / قازانج</div><div>دۆخ</div><div>کردار</div></div>
+          <div id="orders-body"></div>
+        </div>
+      </div>
+
+      <!-- ═══ MESSAGES ═══ -->
+      <div class="pg" id="pg-messages">
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+            <h3 style="font-size:.92rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:7px">✉️ نامەی نوێ بنێرە</h3>
+            <div style="display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap">
+              <button class="ab ab2" onclick="selAll()">هەموو فرۆشیارانی پەسەندکراو</button>
+              <button class="ab ag2" onclick="clearSel()">پاکردنەوە</button>
+            </div>
+            <div class="recip-list" id="recip-list"></div>
+            <div class="fg"><label class="fl">بابەت</label><input class="fi" id="msg-subj" placeholder="بابەتی نامەکەت..."></div>
+            <div class="fg"><label class="fl">دەقی نامە</label><textarea class="fi" id="msg-body" placeholder="نامەکەت بنووسە..." style="min-height:120px"></textarea></div>
+            <button class="btn btn-gold" style="width:100%" onclick="sendMsg()">📨 نامە بنێرە</button>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+            <h3 style="font-size:.92rem;font-weight:700;margin-bottom:14px">📤 نامە نێردراوەکان</h3>
+            <div id="sent-msgs"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SETTINGS ═══ -->
+      <div class="pg" id="pg-settings">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+            <h3 style="font-size:.92rem;font-weight:700;margin-bottom:16px">⚙️ ڕێکخستنەکانی گشتی</h3>
+            <div class="fg"><label class="fl">ناوی پلاتفۆرم</label><input class="fi" value="بازاڕی کوردستان"></div>
+            <div class="fg"><label class="fl">ئیمەیڵی پەیوەندی</label><input class="fi" type="email" value="info@bazari.com"></div>
+            <div class="fg"><label class="fl">مۆبایل</label><input class="fi" type="tel" value="07501234567"></div>
+            <button class="btn btn-gold" style="margin-top:4px" onclick="toast2('✓ پاشەکەوت کرا','s')">پاشەکەوت بکە</button>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+            <h3 style="font-size:.92rem;font-weight:700;margin-bottom:16px">🔐 گۆڕینی وشەی تێپەڕین</h3>
+            <div class="fg"><label class="fl">وشەی تێپەڕینی ئێستا</label><input class="fi" type="password" placeholder="••••••••"></div>
+            <div class="fg"><label class="fl">وشەی تێپەڕینی نوێ</label><input class="fi" type="password" placeholder="••••••••"></div>
+            <div class="fg"><label class="fl">دووبارە نوێ</label><input class="fi" type="password" placeholder="••••••••"></div>
+            <button class="btn btn-gold" style="margin-top:4px" onclick="toast2('✓ وشەی تێپەڕین گۆڕدرا','s')">گۆڕین</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+
+  <!-- ─── MOBILE BOTTOM NAV ─── -->
+  <nav class="mob-bot-nav">
+    <div class="mbn-item active" id="mbn-dash" onclick="goPg('pg-dash',null,'📊','داشبۆرد');setMbn('mbn-dash')"><div class="mbn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div><div class="mbn-lbl">داشبۆرد</div></div>
+    <div class="mbn-item" id="mbn-sell" onclick="goPg('pg-sellers',null,'👥','فرۆشیارەکان');setMbn('mbn-sell')">
+      <div class="mbn-dot" id="mbn-dot-pend"></div>
+      <div class="mbn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.5"/><path d="M2 20c0-3.3 3.1-6 7-6s7 2.7 7 6"/><circle cx="19" cy="8" r="2.5"/><path d="M16.5 20c0-2.2 1.3-4 3.5-4"/></svg></div><div class="mbn-lbl">فرۆشیارەکان</div>
+    </div>
+    <div class="mbn-item" id="mbn-prod" onclick="goPg('pg-products',null,'📦','کاڵاکان');setMbn('mbn-prod')"><div class="mbn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><div class="mbn-lbl">کاڵاکان</div></div>
+    <div class="mbn-item" id="mbn-ord" onclick="goPg('pg-orders',null,'🧾','داواکاریەکان');setMbn('mbn-ord')">
+      <div class="mbn-dot" id="mbn-dot-ord"></div>
+      <div class="mbn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div><div class="mbn-lbl">داواکاری</div>
+    </div>
+    <div class="mbn-item" id="mbn-msg" onclick="goPg('pg-messages',null,'✉️','نامەنێردن');setMbn('mbn-msg')"><div class="mbn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="14" y2="13"/></svg></div><div class="mbn-lbl">نامە</div></div>
+  </nav>
+
+</div><!-- /layout -->
+
+<!-- ─── MODAL: SELLER ─── -->
+<div class="overlay" id="m-seller">
+  <div class="modal" style="max-width:680px">
+    <div class="mh"><div class="mh-title" id="ms-title">زانیاری فرۆشیار</div><div class="mclose" onclick="closeM('m-seller')">✕</div></div>
+    <div class="mbody">
+      <div class="card-grid">
+        <div class="card-box"><div class="card-lbl">🪪 پێشەوەی کارتی ناسینەوە</div><div class="card-img" id="ms-cf"><span style="font-size:2.2rem">🪪</span></div></div>
+        <div class="card-box"><div class="card-lbl">🪪 دواوەی کارتی ناسینەوە</div><div class="card-img" id="ms-cb"><span style="font-size:2.2rem">🪪</span></div></div>
+      </div>
+      <!-- Full info including password -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:16px" id="ms-info"></div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap" id="ms-acts"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL: PRODUCT ─── -->
+<div class="overlay" id="m-prod">
+  <div class="modal" style="max-width:580px">
+    <div class="mh"><div class="mh-title" id="mp-title">زیادکردنی کاڵای نوێ</div><div class="mclose" onclick="closeM('m-prod')">✕</div></div>
+    <div class="mbody">
+      <input type="hidden" id="mp-id">
+      <!-- 4 IMAGE SLOTS -->
+      <label class="fl" style="margin-bottom:9px">🖼️ وێنەکانی کاڵا (تا ٤ وێنە)</label>
+      <div class="img4-grid" id="img4-grid">
+        <!-- slots built by JS -->
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">ناوی کاڵا</label><input class="fi" id="mp-name" placeholder="ناوی تەواو..."></div>
+        <div class="fg"><label class="fl">ئیمۆجی (ئەگەر وێنە نەبوو)</label><input class="fi" id="mp-em" placeholder="📦" style="font-size:1.2rem;text-align:center"></div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="fl">کاتیگۆری</label>
+          <select class="fi" id="mp-cat">
+            <option>ئەلیکترۆنیات</option><option>جل و بەرگ</option>
+            <option>بازنامەی ماڵ</option><option>خواردن</option>
+            <option>تەندروستی</option><option>وەرزش</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">نرخی ڕاستەقینە (دینار)</label><input class="fi" type="number" id="mp-price" placeholder="0"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">زیادکردنی نرخ بەربەست</label><input class="fi" type="number" id="mp-max" placeholder="0"></div>
+        <div class="fg"><label class="fl">بەج (ئەگەر هەبوو)</label><input class="fi" id="mp-badge" placeholder="باشترین، نوێ..."></div>
+      </div>
+      <div class="fg"><label class="fl">وەسف</label><textarea class="fi" id="mp-desc" placeholder="وەسفی کاڵاکە..."></textarea></div>
+      <div style="display:flex;gap:9px;margin-top:4px;flex-wrap:wrap">
+        <button class="btn btn-gold" style="flex:1;min-width:120px" onclick="saveProd()">✓ پاشەکەوت بکە</button>
+        <button class="btn btn-out" onclick="closeM('m-prod')">هەڵوەشاندنەوە</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL: ORDER ─── -->
+<div class="overlay" id="m-order">
+  <div class="modal" style="max-width:500px">
+    <div class="mh"><div class="mh-title">وردەکاری داواکاری</div><div class="mclose" onclick="closeM('m-order')">✕</div></div>
+    <div class="mbody">
+      <div style="background:rgba(240,165,0,.06);border:1px solid rgba(240,165,0,.18);border-radius:13px;padding:13px;margin-bottom:14px" id="mo-info"></div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap" id="mo-acts"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL: MSG DETAIL ─── -->
+<div class="overlay" id="m-msg">
+  <div class="modal" style="max-width:480px">
+    <div class="mh"><div class="mh-title">وردەکاری نامە</div><div class="mclose" onclick="closeM('m-msg')">✕</div></div>
+    <div class="mbody">
+      <div style="background:rgba(240,165,0,.06);border:1px solid rgba(240,165,0,.2);border-radius:13px;padding:13px;margin-bottom:12px" id="mm-head"></div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:14px;font-size:.88rem;line-height:1.85;color:var(--text2)" id="mm-body"></div>
+      <button class="btn btn-out" style="width:100%;margin-top:12px" onclick="closeM('m-msg')">داخستن</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL: CONFIRM ─── -->
+<div class="overlay" id="m-confirm">
+  <div class="modal" style="max-width:360px">
+    <div class="mh"><div class="mh-title" id="mc-title">دڵنیایی</div><div class="mclose" onclick="closeM('m-confirm')">✕</div></div>
+    <div class="mbody" style="text-align:center">
+      <div style="font-size:2.8rem;margin-bottom:12px" id="mc-icon">⚠️</div>
+      <p style="color:var(--text2);font-size:.88rem;line-height:1.8;margin-bottom:18px" id="mc-msg"></p>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <button class="btn" style="flex:1;min-width:100px" id="mc-ok">بەڵێ</button>
+        <button class="btn btn-out" style="flex:1;min-width:100px" onclick="closeM('m-confirm')">نەخێر</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STORAGE ──
+const KS='bk_sellers',KP='bk_products',KO='bk_orders',KM='bk_messages';
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+const gS=()=>ld(KS,[]);
+const gP=()=>ld(KP,[]);
+const gO=()=>ld(KO,[]);
+const gM=()=>ld(KM,[]);
+
+// ── STATE ──
+let selFilt='all',editProdId=null,prodImgs=[null,null,null,null],msgSelIds=[];
+
+// ── LOGIN ──
+function doLogin(){
+  const u=document.getElementById('l-u').value.trim();
+  const p=document.getElementById('l-p').value;
+  if(u==='admin'&&p==='admin123'){
+    document.getElementById('login-page').style.display='none';
+    document.getElementById('main-layout').style.display='flex';
+    try{localStorage.setItem('bk_admin_session','1');}catch(e){}
+    initDash();
+  } else {
+    const lc=document.querySelector('.lcard');
+    lc.style.animation='shk .3s ease';setTimeout(()=>lc.style.animation='',400);
+    toast2('❌ زانیاری هەڵەیە','e');
+  }
+}
+function doLogout(){
+  try{localStorage.removeItem('bk_admin_session');}catch(e){}
+  document.getElementById('main-layout').style.display='none';
+  document.getElementById('login-page').style.display='flex';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('login-page').style.display!=='none')doLogin();});
+// Restore admin session on load
+document.addEventListener('DOMContentLoaded',()=>{
+  document.head.insertAdjacentHTML('beforeend','<style>@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}</style>');
+  try{
+    if(localStorage.getItem('bk_admin_session')==='1'){
+      document.getElementById('login-page').style.display='none';
+      document.getElementById('main-layout').style.display='flex';
+      initDash();
+    }
+  }catch(e){}
+});
+
+// ── SIDEBAR MOBILE ──
+function openSidebar(){document.getElementById('sidebar').classList.add('mob-open');document.getElementById('s-overlay').classList.add('active');document.body.style.overflow='hidden';}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('mob-open');document.getElementById('s-overlay').classList.remove('active');document.body.style.overflow='';}
+
+// ── PAGE NAV ──
+const pgMeta={'pg-dash':['📊','داشبۆرد'],'pg-sellers':['👥','فرۆشیارەکان'],'pg-products':['📦','کاڵاکان'],'pg-orders':['🧾','داواکاریەکان'],'pg-messages':['✉️','نامەنێردن'],'pg-settings':['⚙️','ڕێکخستنەکان']};
+function goPg(id,navEl,icon,title){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  const m=pgMeta[id]||['📊',''];
+  document.getElementById('pg-icon').textContent=icon||m[0];
+  document.getElementById('pg-title').textContent=title||m[1];
+  closeSidebar();
+  if(id==='pg-sellers') renderSellers();
+  if(id==='pg-products') renderProds();
+  if(id==='pg-orders') renderOrders();
+  if(id==='pg-messages'){renderRecipients();renderSentMsgs();}
+}
+function setMbn(id){document.querySelectorAll('.mbn-item').forEach(m=>m.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+// ── DASHBOARD ──
+function initDash(){updateBadges();renderDashStats();renderDashChart();renderDashPend();renderDashQuick();}
+
+function updateBadges(){
+  const pend=gS().filter(s=>s.status==='pending').length;
+  const newOrd=gO().filter(o=>o.status==='pending').length;
+  document.getElementById('nb-pend').textContent=pend;
+  document.getElementById('nb-ord').textContent=newOrd;
+  document.getElementById('pend-ct').textContent=pend+' فرۆشیار';
+  const md=document.getElementById('mbn-dot-pend');if(md)md.style.display=pend>0?'block':'none';
+  const od=document.getElementById('mbn-dot-ord');if(od)od.style.display=newOrd>0?'block':'none';
+}
+
+function renderDashStats(){
+  const sellers=gS();const prods=gP();const orders=gO();
+  const appr=sellers.filter(s=>s.status==='approved').length;
+  const pend=sellers.filter(s=>s.status==='pending').length;
+  const profit=orders.reduce((a,o)=>a+(o.profit||0),0);
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="sc"><div class="sc-top"><div class="sc-icon i-g">👥</div><span class="sc-delta d-up">+${pend} چاوەڕوان</span></div><div class="sc-num">${appr+pend}</div><div class="sc-lbl">کۆی فرۆشیارەکان</div></div>
+    <div class="sc"><div class="sc-top"><div class="sc-icon i-gr">📦</div><span class="sc-delta d-up">چالاک</span></div><div class="sc-num">${prods.length}</div><div class="sc-lbl">کۆی کاڵاکان</div></div>
+    <div class="sc"><div class="sc-top"><div class="sc-icon i-b">🧾</div><span class="sc-delta d-up">+${orders.filter(o=>o.status==='pending').length} نوێ</span></div><div class="sc-num">${orders.length}</div><div class="sc-lbl">کۆی داواکاریەکان</div></div>
+    <div class="sc"><div class="sc-top"><div class="sc-icon i-o">💰</div></div><div class="sc-num">${profit>0?(profit/1000).toFixed(0)+'K':'٠'}</div><div class="sc-lbl">کۆی قازانج (دینار)</div></div>`;
+}
+
+function renderDashChart(){
+  const months=['فەر','ئادار','نیسان','ئایار','حوز','تەمموز'];
+  const vals=[45,82,63,110,94,138];
+  const max=Math.max(...vals);
+  let ch='',lb='';
+  vals.forEach((v,i)=>{const pct=Math.round(v/max*100);const hi=v===max;ch+=`<div class="b-col"><div class="b-fill ${hi?'hi':''}" style="height:${Math.max(pct,3)}%"><span class="b-val">${v}K</span></div></div>`;lb+=`<span>${months[i]}</span>`;});
+  document.getElementById('dash-chart').innerHTML=ch;document.getElementById('chart-lbls').innerHTML=lb;
+}
+
+function renderDashPend(){
+  const pend=gS().filter(s=>s.status==='pending');
+  const el=document.getElementById('dash-pend');
+  if(!pend.length){el.innerHTML='<div class="empty"><div class="empty-ic">✅</div><div class="empty-tx">هیچ فرۆشیارێک چاوەڕوان نییە</div></div>';return;}
+  el.innerHTML=pend.map(s=>`
+    <div class="pend-item" onclick="openSellerM(${JSON.stringify(s).replace(/"/g,'&quot;')})">
+      <div class="pav">${s.name.charAt(0)}</div>
+      <div class="pinfo"><div class="pname">${s.name}</div><div class="pmeta">${s.email} | ${s.ph}</div></div>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        <button class="ab ag" onclick="event.stopPropagation();quickApprove('${s.id}')">✓</button>
+        <button class="ab ar" onclick="event.stopPropagation();quickReject('${s.id}')">✗</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderDashQuick(){
+  const top=gS().filter(s=>s.status==='approved').sort((a,b)=>b.orders-a.orders).slice(0,5);
+  document.getElementById('top-sellers').innerHTML=top.length?top.map(s=>`
+    <div class="av-row" style="margin-bottom:9px">
+      <div class="av-sm">${s.name.charAt(0)}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:.8rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.name}</div><div class="prog-bar"><div class="prog-fill" style="width:${top[0].orders>0?Math.round(s.orders/top[0].orders*100):0}%"></div></div></div>
+      <span style="font-size:.78rem;color:var(--gold);font-weight:700">${s.orders}</span>
+    </div>`).join(''):'<div class="empty"><div class="empty-ic">👤</div><div class="empty-tx">هیچ فرۆشیارێک نییە</div></div>';
+
+  const orders=gO();
+  document.getElementById('sys-info').innerHTML=`
+    <div class="drow" style="font-size:.8rem"><span class="dlbl">فرۆشیارە پەسەندکراوەکان</span><span class="dval gr">${gS().filter(s=>s.status==='approved').length}</span></div>
+    <div class="drow" style="font-size:.8rem"><span class="dlbl">فرۆشیارە چاوەڕوانەکان</span><span class="dval g">${gS().filter(s=>s.status==='pending').length}</span></div>
+    <div class="drow" style="font-size:.8rem"><span class="dlbl">کاڵاکان</span><span class="dval">${gP().length}</span></div>
+    <div class="drow" style="font-size:.8rem"><span class="dlbl">داواکاریەکان</span><span class="dval">${orders.length}</span></div>
+    <div class="drow" style="font-size:.8rem"><span class="dlbl">نامە نێردراوەکان</span><span class="dval">${gM().length}</span></div>`;
+}
+
+// ── SELLERS ──
+function renderSellers(filt){
+  filt=filt||selFilt;
+  const list=filt==='all'?gS():gS().filter(s=>s.status===filt);
+  const el=document.getElementById('sellers-body');
+  if(!list.length){el.innerHTML='<div class="empty" style="padding:28px"><div class="empty-ic">👤</div><div class="empty-tx">هیچ فرۆشیارێک نییە</div></div>';return;}
+  el.innerHTML=list.map(s=>`
+    <div class="tbl-row sel-t" onclick="openSellerM(${JSON.stringify(s).replace(/"/g,'&quot;')})">
+      <div class="tc"><div class="av-row"><div class="av-sm">${s.name.charAt(0)}</div><div style="min-width:0"><div style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.name}</div></div></div></div>
+      <div class="tc m" style="font-size:.76rem">${s.email}<br>${s.ph}</div>
+      <div class="tc"><span class="badge ${s.status==='pending'?'b-pend':s.status==='approved'?'b-appr':'b-rej'}">${s.status==='pending'?'⏳ چاوەڕوان':s.status==='approved'?'✓ پەسەندکراو':'✗ ڕەتکراو'}</span></div>
+      <div class="tc m">${s.date||'-'}</div>
+      <div class="tc" onclick="event.stopPropagation()">
+        <div class="abtns">
+          ${s.status==='pending'?`<button class="ab ag" onclick="quickApprove('${s.id}')">✓ پەسەند</button><button class="ab ar" onclick="quickReject('${s.id}')">✗ ڕەت</button>`:''}
+          <button class="ab ag2" onclick="openSellerM(${JSON.stringify(s).replace(/"/g,'&quot;')})">👁 بینین</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filtSel(f,el){
+  selFilt=f;
+  document.querySelectorAll('#pg-sellers .ab').forEach(b=>{b.className='ab ag2'});
+  if(el) el.className='ab ao';
+  renderSellers(f);
+}
+
+// Full seller info including password
+function openSellerM(s){
+  if(typeof s==='string') s=JSON.parse(s);
+  document.getElementById('ms-title').textContent='زانیاری فرۆشیار — '+s.name;
+  const cf=document.getElementById('ms-cf');
+  const cb=document.getElementById('ms-cb');
+  cf.innerHTML=s.cardF?`<img src="${s.cardF}" style="width:100%;height:100%;object-fit:cover">`:'<div style="text-align:center;padding:18px"><div style="font-size:2rem">🪪</div><div style="font-size:.68rem;color:var(--text3);margin-top:5px">وێنە نەتۆماركراوە</div></div>';
+  cb.innerHTML=s.cardB?`<img src="${s.cardB}" style="width:100%;height:100%;object-fit:cover">`:'<div style="text-align:center;padding:18px"><div style="font-size:2rem">🪪</div><div style="font-size:.68rem;color:var(--text3);margin-top:5px">وێنە نەتۆماركراوە</div></div>';
+
+  // Count orders and profit for this seller
+  const myOrders=gO().filter(o=>o.sellerId===s.id);
+  const totalProfit=myOrders.reduce((a,o)=>a+(o.profit||0),0);
+
+  document.getElementById('ms-info').innerHTML=`
+    <div class="drow"><span class="dlbl">ناوی تەواو</span><span class="dval">${s.name}</span></div>
+    <div class="drow"><span class="dlbl">ئیمەیڵ</span><span class="dval">${s.email}</span></div>
+    <div class="drow"><span class="dlbl">مۆبایل</span><span class="dval">${s.ph}</span></div>
+    <div class="drow"><span class="dlbl">وشەی تێپەڕین</span><span class="dval" style="font-family:monospace;letter-spacing:1px;color:var(--orange)">${s.pw}</span></div>
+    <div class="drow"><span class="dlbl">بەروارى تۆمار</span><span class="dval">${s.date||'-'}</span></div>
+    <div class="drow"><span class="dlbl">کۆی فرۆشتنەکان</span><span class="dval g">${myOrders.length}</span></div>
+    <div class="drow"><span class="dlbl">کۆی قازانج</span><span class="dval gr">${totalProfit.toLocaleString('ar-IQ')} دینار</span></div>
+    <div class="drow"><span class="dlbl">دۆخ</span><span class="dval"><span class="badge ${s.status==='pending'?'b-pend':s.status==='approved'?'b-appr':'b-rej'}">${s.status==='pending'?'⏳ چاوەڕوان':s.status==='approved'?'✓ پەسەندکراو':'✗ ڕەتکراو'}</span></span></div>`;
+
+  let acts='';
+  if(s.status==='pending') acts=`<button class="btn btn-gr" style="flex:1" onclick="approveSeller('${s.id}')">✓ پەسەندکردن</button><button class="btn btn-rd" style="flex:1" onclick="rejectSeller('${s.id}')">✗ ڕەتکردن</button>`;
+  else if(s.status==='approved') acts=`<button class="btn btn-rd" style="flex:1" onclick="rejectSeller('${s.id}')">بەستنی حساب</button>`;
+  else acts=`<button class="btn btn-gr" style="flex:1" onclick="approveSeller('${s.id}')">دووبارە چالاككردن</button>`;
+  document.getElementById('ms-acts').innerHTML=acts+`<button class="btn btn-out" onclick="closeM('m-seller')">داخستن</button>`;
+  openM('m-seller');
+}
+
+function approveSeller(id){const s=gS();const u=s.find(x=>x.id===id);if(!u)return;u.status='approved';sv(KS,s);closeM('m-seller');refresh();toast2('✓ فرۆشیار پەسەندکرا: '+u.name,'s');}
+function rejectSeller(id){
+  confirm2('✗ ڕەتکردن','دڵنیایت؟',()=>{
+    const s=gS();const u=s.find(x=>x.id===id);if(!u)return;u.status='rejected';sv(KS,s);
+    closeM('m-seller');closeM('m-confirm');refresh();toast2('ڕەتکرا','w');
+  },'var(--red)');
+}
+function quickApprove(id){const s=gS();const u=s.find(x=>x.id===id);if(!u)return;u.status='approved';sv(KS,s);refresh();toast2('✓ پەسەندکرا','s');}
+function quickReject(id){const s=gS();const u=s.find(x=>x.id===id);if(!u)return;u.status='rejected';sv(KS,s);refresh();toast2('ڕەتکرا','w');}
+
+// ── PRODUCTS (4 images) ──
+function buildImg4Grid(){
+  const grid=document.getElementById('img4-grid');
+  grid.innerHTML='';
+  for(let i=0;i<4;i++){
+    const box=document.createElement('div');
+    box.className='img4-box';
+    box.id='ib-'+i;
+    box.innerHTML=`
+      <input type="file" accept="image/*" onchange="onImg4(${i},this)" id="ii-${i}">
+      <img class="img4-prev" id="ip-${i}" alt="">
+      <button class="img4-del" id="id-${i}" onclick="event.stopPropagation();delImg4(${i})">✕</button>
+      <div class="img4-ic">🖼️</div>
+      <div class="img4-num">وێنە ${i+1}</div>`;
+    grid.appendChild(box);
+  }
+}
+
+function onImg4(i,inp){
+  if(!inp.files||!inp.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{
+    prodImgs[i]=e.target.result;
+    document.getElementById('ip-'+i).src=e.target.result;
+    document.getElementById('ip-'+i).style.display='block';
+    document.getElementById('id-'+i).style.display='flex';
+    document.getElementById('ib-'+i).classList.add('has-img');
+    document.getElementById('ib-'+i).querySelector('.img4-ic').style.display='none';
+    document.getElementById('ib-'+i).querySelector('.img4-num').style.display='none';
+  };
+  r.readAsDataURL(inp.files[0]);
+}
+
+function delImg4(i){
+  prodImgs[i]=null;
+  document.getElementById('ip-'+i).style.display='none';
+  document.getElementById('id-'+i).style.display='none';
+  document.getElementById('ib-'+i).classList.remove('has-img');
+  document.getElementById('ib-'+i).querySelector('.img4-ic').style.display='';
+  document.getElementById('ib-'+i).querySelector('.img4-num').style.display='';
+  document.getElementById('ii-'+i).value='';
+}
+
+function openAddProd(){
+  editProdId=null;prodImgs=[null,null,null,null];
+  document.getElementById('mp-title').textContent='زیادکردنی کاڵای نوێ';
+  ['mp-id','mp-name','mp-em','mp-price','mp-max','mp-badge','mp-desc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mp-cat').value='ئەلیکترۆنیات';
+  buildImg4Grid();openM('m-prod');
+}
+
+function openEditProd(id){
+  const p=gP().find(x=>x.id===id);if(!p)return;
+  editProdId=id;
+  prodImgs=(p.images||[null,null,null,null]).slice(0,4);
+  while(prodImgs.length<4)prodImgs.push(null);
+  document.getElementById('mp-title').textContent='گۆڕینی کاڵا';
+  document.getElementById('mp-id').value=id;
+  document.getElementById('mp-name').value=p.name;
+  document.getElementById('mp-em').value=p.em||'';
+  document.getElementById('mp-cat').value=p.cat;
+  document.getElementById('mp-price').value=p.price;
+  document.getElementById('mp-max').value=p.max||0;
+  document.getElementById('mp-badge').value=p.badge||'';
+  document.getElementById('mp-desc').value=p.desc||'';
+  buildImg4Grid();
+  prodImgs.forEach((img,i)=>{
+    if(img){
+      document.getElementById('ip-'+i).src=img;
+      document.getElementById('ip-'+i).style.display='block';
+      document.getElementById('id-'+i).style.display='flex';
+      document.getElementById('ib-'+i).classList.add('has-img');
+      document.getElementById('ib-'+i).querySelector('.img4-ic').style.display='none';
+      document.getElementById('ib-'+i).querySelector('.img4-num').style.display='none';
+    }
+  });
+  openM('m-prod');
+}
+
+function saveProd(){
+  const name=document.getElementById('mp-name').value.trim();
+  const price=parseInt(document.getElementById('mp-price').value)||0;
+  if(!name||!price){toast2('⚠️ ناو و نرخ پڕ بکەرەوە','w');return;}
+  const prods=gP();
+  const obj={
+    id:editProdId||('p'+Date.now()),
+    name,em:document.getElementById('mp-em').value.trim()||'📦',
+    cat:document.getElementById('mp-cat').value,
+    price,max:parseInt(document.getElementById('mp-max').value)||0,
+    badge:document.getElementById('mp-badge').value.trim(),
+    desc:document.getElementById('mp-desc').value.trim(),
+    images:prodImgs.map(x=>x||null)
+  };
+  if(editProdId){const idx=prods.findIndex(p=>p.id===editProdId);if(idx>=0)prods[idx]=obj;}
+  else prods.push(obj);
+  sv(KP,prods);closeM('m-prod');renderProds();renderDashStats();
+  toast2(editProdId?'✓ کاڵا نوێکرایەوە':'✓ کاڵای نوێ زیادکرا','s');
+}
+
+function renderProds(list){
+  list=list||gP();
+  const el=document.getElementById('prods-body');
+  if(!list.length){el.innerHTML='<div class="empty" style="padding:28px"><div class="empty-ic">📦</div><div class="empty-tx">هیچ کاڵایەک نییە — زیاد بکە</div></div>';return;}
+  el.innerHTML=list.map(p=>{
+    const imgs=(p.images||[]).filter(Boolean);
+    const thumbs=imgs.slice(0,3).map(img=>`<img src="${img}" style="width:22px;height:22px;border-radius:5px;object-fit:cover;border:1px solid var(--border)">`).join('');
+    return `<div class="tbl-row prod-t">
+      <div class="tc"><div class="av-row">
+        <div style="width:38px;height:38px;border-radius:8px;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#131928,#0d1117);display:flex;align-items:center;justify-content:center">
+          ${imgs[0]?`<img src="${imgs[0]}" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:1.3rem">${p.em||'📦'}</span>`}
+        </div>
+        <div style="min-width:0"><div style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>${p.badge?`<span class="badge b-new" style="margin-top:2px">${p.badge}</span>`:''}</div>
+      </div></div>
+      <div class="tc"><span class="badge b-new">${p.cat}</span></div>
+      <div class="tc g">${(p.price||0).toLocaleString('ar-IQ')}</div>
+      <div class="tc"><div style="display:flex;gap:4px;align-items:center">${thumbs||'<span style="color:var(--text3);font-size:.72rem">بێ وێنە</span>'}<span style="font-size:.68rem;color:var(--text3)">${imgs.length>0?imgs.length+'/٤':''}</span></div></div>
+      <div class="tc"><div class="abtns">
+        <button class="ab ao" onclick="openEditProd('${p.id}')">✏️ گۆڕین</button>
+        <button class="ab ar" onclick="deleteProd('${p.id}')">🗑</button>
+      </div></div>
+    </div>`;
+  }).join('');
+}
+
+function deleteProd(id){
+  confirm2('🗑 سڕینەوە','دڵنیایت دەتەوێت ئەم کاڵایە بسڕیتەوە؟',()=>{
+    sv(KP,gP().filter(p=>p.id!==id));closeM('m-confirm');renderProds();renderDashStats();toast2('کاڵا سڕایەوە','w');
+  },'var(--red)');
+}
+
+// ── ORDERS ──
+function renderOrders(list){
+  list=list||gO();
+  const el=document.getElementById('orders-body');
+  if(!list.length){el.innerHTML='<div class="empty" style="padding:28px"><div class="empty-ic">🧾</div><div class="empty-tx">هیچ داواکارییەک نییە</div></div>';return;}
+  el.innerHTML=list.sort((a,b)=>(b.ts||0)-(a.ts||0)).map(o=>`
+    <div class="tbl-row ord-t" onclick="openOrderM(${JSON.stringify(o).replace(/"/g,'&quot;')})">
+      <div class="tc g">${o.id}</div>
+      <div class="tc"><div style="font-weight:700;font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.prod}</div><div style="color:var(--text2);font-size:.72rem">${o.seller}</div></div>
+      <div class="tc"><div class="g" style="font-weight:700">${(o.price||0).toLocaleString('ar-IQ')}</div><div style="color:var(--green);font-size:.72rem">+${(o.profit||0).toLocaleString('ar-IQ')}</div></div>
+      <div class="tc"><span class="badge ${o.status==='pending'?'b-pend':o.status==='processing'?'b-proc':'b-done'}">${o.status==='pending'?'🆕 نوێ':o.status==='processing'?'⚙️ ئەنجامدان':'✓ تەواو'}</span></div>
+      <div class="tc" onclick="event.stopPropagation()"><div class="abtns">
+        ${o.status==='pending'?`<button class="ab ag" onclick="updOrd('${o.id}','processing')">⚙️ دەستپێبکە</button>`:''}
+        ${o.status==='processing'?`<button class="ab ag" onclick="updOrd('${o.id}','done')">✓ تەواو</button>`:''}
+        <button class="ab ag2" onclick="openOrderM(${JSON.stringify(o).replace(/"/g,'&quot;')})">👁</button>
+      </div></div>
+    </div>`).join('');
+}
+
+function openOrderM(o){
+  if(typeof o==='string') o=JSON.parse(o);
+  document.getElementById('mo-info').innerHTML=`
+    <div class="drow"><span class="dlbl">ژمارە</span><span class="dval g">${o.id}</span></div>
+    <div class="drow"><span class="dlbl">کاڵا</span><span class="dval">${o.prod}</span></div>
+    <div class="drow"><span class="dlbl">فرۆشیار</span><span class="dval">${o.seller}</span></div>
+    <div class="drow"><span class="dlbl">کڕیار یەکەم</span><span class="dval">${o.cust1?.name} — ${o.cust1?.phone}</span></div>
+    <div class="drow"><span class="dlbl">ناونیشان یەکەم</span><span class="dval">${o.cust1?.addr}</span></div>
+    ${o.cust2?`<div class="drow"><span class="dlbl">کڕیار دووەم</span><span class="dval">${o.cust2.name} — ${o.cust2.phone}</span></div><div class="drow"><span class="dlbl">ناونیشان دووەم</span><span class="dval">${o.cust2.addr}</span></div>`:''}
+    <div class="drow"><span class="dlbl">نرخ</span><span class="dval g">${(o.price||0).toLocaleString('ar-IQ')} دینار</span></div>
+    <div class="drow"><span class="dlbl">قازانج فرۆشیار</span><span class="dval gr">+${(o.profit||0).toLocaleString('ar-IQ')} دینار</span></div>
+    <div class="drow"><span class="dlbl">بەروار</span><span class="dval">${o.date||'-'}</span></div>`;
+  let acts='';
+  if(o.status==='pending') acts=`<button class="btn btn-gr" style="flex:1" onclick="updOrd('${o.id}','processing');closeM('m-order')">⚙️ دەستپێکردن</button>`;
+  else if(o.status==='processing') acts=`<button class="btn btn-gr" style="flex:1" onclick="updOrd('${o.id}','done');closeM('m-order')">✓ تەواوکردن</button>`;
+  else acts=`<div style="color:var(--green);font-size:.85rem;font-weight:700;flex:1;padding:10px;text-align:center">✅ تەواوکرا</div>`;
+  document.getElementById('mo-acts').innerHTML=acts+`<button class="btn btn-out" onclick="closeM('m-order')">داخستن</button>`;
+  openM('m-order');
+}
+
+function updOrd(id,status){
+  const orders=gO();const o=orders.find(x=>x.id===id);if(!o)return;
+  o.status=status;sv(KO,orders);updateBadges();
+  if(document.getElementById('pg-orders').classList.contains('active'))renderOrders();
+
+  // Also update in sellers' view (My Sales page on platform)
+  toast2(status==='done'?'✓ داواکاری تەواوکرا':'⚙️ دەستپێکرا','s');
+}
+
+// ── MESSAGES ──
+function renderRecipients(){
+  const sellers=gS().filter(s=>s.status==='approved');
+  const el=document.getElementById('recip-list');
+  if(!sellers.length){el.innerHTML='<div style="padding:12px;text-align:center;color:var(--text3);font-size:.8rem">هیچ فرۆشیارێکی پەسەندکراو نییە</div>';return;}
+  el.innerHTML=sellers.map(s=>`
+    <div class="ri" id="ri-${s.id}" onclick="togRecip('${s.id}')">
+      <div class="ri-cb" id="rcb-${s.id}"></div>
+      <div class="av-sm">${s.name.charAt(0)}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:.83rem;font-weight:700">${s.name}</div><div style="font-size:.7rem;color:var(--text3)">${s.email}</div></div>
+    </div>`).join('');
+  msgSelIds=[];
+}
+
+function togRecip(id){
+  const item=document.getElementById('ri-'+id);const cb=document.getElementById('rcb-'+id);
+  if(msgSelIds.includes(id)){msgSelIds=msgSelIds.filter(x=>x!==id);item.classList.remove('sel');cb.textContent='';}
+  else{msgSelIds.push(id);item.classList.add('sel');cb.textContent='✓';}
+}
+function selAll(){const s=gS().filter(x=>x.status==='approved');msgSelIds=s.map(x=>x.id);s.forEach(x=>{const i=document.getElementById('ri-'+x.id);const c=document.getElementById('rcb-'+x.id);if(i)i.classList.add('sel');if(c)c.textContent='✓';});}
+function clearSel(){msgSelIds=[];document.querySelectorAll('.ri').forEach(e=>e.classList.remove('sel'));document.querySelectorAll('.ri-cb').forEach(e=>e.textContent='');}
+
+function sendMsg(){
+  const subj=document.getElementById('msg-subj').value.trim();
+  const body=document.getElementById('msg-body').value.trim();
+  if(!subj||!body){toast2('⚠️ بابەت و دەق بنووسە','w');return;}
+  if(!msgSelIds.length){toast2('⚠️ بۆ کێ دەنێریت هەڵبژێرە','w');return;}
+  const msgs=gM();
+  const approvedAll=gS().filter(s=>s.status==='approved');
+  const isBroad=msgSelIds.length===approvedAll.length;
+  if(isBroad){msgs.push({id:'m'+Date.now(),sellerId:'all',subject:subj,body,ts:Date.now(),readBy:[]});}
+  else{msgSelIds.forEach(sid=>{msgs.push({id:'m'+Date.now()+'_'+sid,sellerId:sid,subject:subj,body,ts:Date.now(),readBy:[]});});}
+  sv(KM,msgs);
+  document.getElementById('msg-subj').value='';document.getElementById('msg-body').value='';
+  clearSel();renderSentMsgs();
+  toast2('✓ نامە بە سەرکەوتوویی نێردرا','s');
+}
+
+function renderSentMsgs(){
+  const msgs=gM().sort((a,b)=>b.ts-a.ts);
+  const el=document.getElementById('sent-msgs');
+  if(!msgs.length){el.innerHTML='<div class="empty"><div class="empty-ic">📭</div><div class="empty-tx">هیچ نامەیەک نێردراو نییە</div></div>';return;}
+  const sellers=gS();
+  el.innerHTML=msgs.slice(0,15).map(m=>{
+    const recip=m.sellerId==='all'?'هەموو فرۆشیارەکان':(sellers.find(s=>s.id===m.sellerId)||{name:m.sellerId}).name;
+    return `<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;padding:11px 13px;margin-bottom:8px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(240,165,0,.25)'" onmouseout="this.style.borderColor='var(--border)'" onclick="viewMsg('${m.id}')">
+      <div style="font-size:.74rem;color:var(--gold);margin-bottom:3px">📤 بۆ: ${recip}</div>
+      <div style="font-size:.85rem;font-weight:700;margin-bottom:3px">${m.subject}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:.7rem;color:var(--text3)">${new Date(m.ts).toLocaleString('ar-IQ')}</span>
+        <span style="font-size:.7rem;color:var(--green)">👁 ${m.readBy?m.readBy.length:0}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function viewMsg(id){
+  const m=gM().find(x=>x.id===id);if(!m)return;
+  const sellers=gS();
+  const recip=m.sellerId==='all'?'هەموو فرۆشیارەکانی پەسەندکراو':(sellers.find(s=>s.id===m.sellerId)||{name:m.sellerId}).name;
+  document.getElementById('mm-head').innerHTML=`
+    <div class="drow"><span class="dlbl">بابەت</span><span class="dval">${m.subject}</span></div>
+    <div class="drow"><span class="dlbl">بۆ</span><span class="dval g">${recip}</span></div>
+    <div class="drow"><span class="dlbl">کات</span><span class="dval">${new Date(m.ts).toLocaleString('ar-IQ')}</span></div>
+    <div class="drow"><span class="dlbl">خوێنراوە</span><span class="dval gr">${m.readBy?m.readBy.length:0} کەس</span></div>`;
+  document.getElementById('mm-body').textContent=m.body;
+  openM('m-msg');
+}
+
+// ── SEARCH ──
+function mainSearch(q){
+  const pg=document.querySelector('.pg.active');if(!pg)return;
+  if(!q){if(pg.id==='pg-products')renderProds();if(pg.id==='pg-sellers')renderSellers();if(pg.id==='pg-orders')renderOrders();return;}
+  if(pg.id==='pg-products') renderProds(gP().filter(p=>p.name.includes(q)||p.cat.includes(q)));
+  if(pg.id==='pg-sellers') renderSellers(gS().filter(s=>s.name.includes(q)||s.email.includes(q)||s.ph.includes(q)));
+  if(pg.id==='pg-orders') renderOrders(gO().filter(o=>o.prod.includes(q)||o.seller.includes(q)||o.id.includes(q)));
+}
+
+// ── HELPERS ──
+function refresh(){updateBadges();renderDashStats();renderDashPend();renderDashQuick();if(document.getElementById('pg-sellers').classList.contains('active'))renderSellers();}
+function openM(id){document.getElementById(id).classList.add('active');document.body.style.overflow='hidden';}
+function closeM(id){document.getElementById(id).classList.remove('active');document.body.style.overflow='';}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o){o.classList.remove('active');document.body.style.overflow=''}}));
+function confirm2(title,msg,cb,color='var(--red)'){
+  document.getElementById('mc-title').textContent=title;document.getElementById('mc-icon').textContent='⚠️';document.getElementById('mc-msg').textContent=msg;
+  const btn=document.getElementById('mc-ok');btn.className='btn';btn.style.background=color;btn.style.color=color===('var(--gold)')||color==='var(--grad)'?'#000':'#fff';btn.style.flex='1';btn.onclick=cb;
+  openM('m-confirm');
+}
+function toast2(msg,type){
+  const t=document.getElementById('toast');t.textContent=msg;t.style.borderBottomColor=type==='e'?'var(--red)':type==='w'?'var(--gold)':'var(--green)';t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3500);
+}
+</script>
+</body>
+</html>
