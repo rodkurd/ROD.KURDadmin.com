@@ -594,13 +594,16 @@ select.fi option{background:var(--card);color:var(--text)}
 const KS='bk_sellers',KP='bk_products',KO='bk_orders',KM='bk_messages';
 
 // ═══════════════════════════════════════
-// 🔥 FIREBASE SYNC
+// 🔥 FIREBASE — REAL-TIME SYNC
 // ═══════════════════════════════════════
 const FB_URL = 'https://kurdmart-3b596-default-rtdb.firebaseio.com';
 const CLOUD_KEYS_ALL = ['bk_sellers','bk_products','bk_orders','bk_messages'];
 let _pushTimer = null;
 let _pushBusy = false;
+let _sseConn = null;
+let _lastOrderCount = 0;
 
+// ── Pull once ──
 async function cloudPull(){
   try{
     const r = await fetch(FB_URL+'/data.json');
@@ -608,51 +611,126 @@ async function cloudPull(){
     const data = await r.json();
     updateCloudStatus('ok');
     if(!data) return true;
-    let changed = false;
     CLOUD_KEYS_ALL.forEach(k=>{
-      if(data[k]!==undefined){
-        const cur = localStorage.getItem(k);
-        const nw = JSON.stringify(data[k]);
-        if(cur !== nw){ localStorage.setItem(k, nw); changed = true; }
-      }
+      if(data[k]!==undefined) localStorage.setItem(k, JSON.stringify(data[k]));
     });
-    // Re-render active page
-    if(changed && typeof refresh==='function') refresh();
+    if(typeof refresh==='function') refresh();
     return true;
   }catch(e){ updateCloudStatus('err'); return false; }
 }
 
+// ── Push to Firebase ──
 async function cloudPush(){
   if(_pushBusy) return;
-  _pushBusy=true;
-  const data={};
+  _pushBusy = true;
+  const data = {};
   CLOUD_KEYS_ALL.forEach(k=>{
-    try{data[k]=JSON.parse(localStorage.getItem(k)||'[]');}catch(e){data[k]=[];}
+    try{ data[k] = JSON.parse(localStorage.getItem(k)||'[]'); }catch(e){ data[k]=[]; }
   });
   try{
     await fetch(FB_URL+'/data.json',{
-      method:'PUT',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(data)
+      method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)
     });
     updateCloudStatus('ok');
-  }catch(e){updateCloudStatus('err');}
-  _pushBusy=false;
+  }catch(e){ updateCloudStatus('err'); }
+  _pushBusy = false;
 }
 
 function schedulePush(){
   clearTimeout(_pushTimer);
-  _pushTimer=setTimeout(cloudPush,900);
+  _pushTimer = setTimeout(cloudPush, 900);
+}
+
+// ── Firebase SSE — Real-time listener ──
+function startRealtime(){
+  if(_sseConn) _sseConn.close();
+  try{
+    _sseConn = new EventSource(FB_URL+'/data/bk_orders.json?accept=text/event-stream');
+    _sseConn.addEventListener('put', async e=>{
+      try{
+        const payload = JSON.parse(e.data);
+        const orders = payload.data;
+        if(!orders) return;
+        const arr = Array.isArray(orders) ? orders.filter(Boolean) : Object.values(orders);
+        const prev = JSON.parse(localStorage.getItem('bk_orders')||'[]');
+        const newCount = arr.filter(o=>o.status==='pending').length;
+        const prevCount = prev.filter(o=>o.status==='pending').length;
+        localStorage.setItem('bk_orders', JSON.stringify(arr));
+        updateCloudStatus('ok');
+        if(typeof refresh==='function') refresh();
+        // New order notification
+        if(newCount > prevCount){
+          const diff = newCount - prevCount;
+          showOrderAlert(diff);
+        }
+        _lastOrderCount = newCount;
+      }catch(err){}
+    });
+    _sseConn.addEventListener('patch', async e=>{
+      // On patch just do a full pull
+      await cloudPull();
+    });
+    _sseConn.onerror = ()=>{
+      updateCloudStatus('err');
+      // Reconnect after 5 seconds
+      setTimeout(startRealtime, 5000);
+    };
+  }catch(e){}
+}
+
+// ── New order popup notification ──
+function showOrderAlert(count){
+  // Browser notification (when tab is in background)
+  if(Notification.permission === 'granted'){
+    new Notification('🛍️ داواکاری نوێ!', {
+      body: count + ' داواکاری نوێ لە پلاتفۆرمەکە',
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23f0a500"/><text y=".9em" font-size="80" x="10">🛍️</text></svg>',
+      tag: 'new-order',
+      requireInteraction: true
+    });
+  } else if(Notification.permission !== 'denied'){
+    Notification.requestPermission().then(p=>{ if(p==='granted') showOrderAlert(count); });
+  }
+
+  // Play a beep sound
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    [880, 1100, 1320].forEach((freq, i)=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.3, ctx.currentTime + i*0.12);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.12 + 0.18);
+      osc.start(ctx.currentTime + i*0.12);
+      osc.stop(ctx.currentTime + i*0.12 + 0.18);
+    });
+  }catch(e){}
+
+  // Show popup banner inside page
+  let pop = document.getElementById('order-alert-pop');
+  if(!pop){
+    pop = document.createElement('div');
+    pop.id = 'order-alert-pop';
+    pop.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;background:linear-gradient(135deg,#f0a500,#ffbf33);color:#000;border-radius:14px;padding:14px 22px;font-weight:800;font-family:inherit;font-size:.92rem;box-shadow:0 8px 30px rgba(240,165,0,.5);display:flex;align-items:center;gap:10px;cursor:pointer;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)';
+    pop.onclick = ()=>{ goPg('pg-orders',null,'🧾','داواکاریەکان'); setMbn('mbn-ord'); pop.remove(); };
+    document.head.insertAdjacentHTML('beforeend','<style>@keyframes popIn{from{transform:translateX(-50%) scale(.6);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}</style>');
+    document.body.appendChild(pop);
+  }
+  pop.innerHTML = '🛍️ داواکاری نوێ هات! &nbsp;<span style="background:rgba(0,0,0,.15);border-radius:50px;padding:2px 9px">' + count + '</span>&nbsp; <span style="font-size:.75rem;font-weight:600;opacity:.75">کلیک بکە ببینیت</span>';
+  clearTimeout(pop._t);
+  pop._t = setTimeout(()=>{ if(pop.parentNode) pop.remove(); }, 10000);
 }
 
 function updateCloudStatus(state){
-  const el=document.getElementById('cloud-status');
+  const el = document.getElementById('cloud-status');
   if(el){
-    el.textContent=state==='ok'?'🔥 Firebase چالاکە':state==='err'?'⚠️ هەڵەی پەیوەندی':'...';
-    el.style.color=state==='ok'?'var(--green)':state==='err'?'var(--red)':'var(--text2)';
+    el.textContent = state==='ok' ? '🔥 ڕاستەوخۆ' : state==='err' ? '⚠️ پەیوەندی نییە' : '...';
+    el.style.color = state==='ok' ? 'var(--green)' : state==='err' ? 'var(--red)' : 'var(--text2)';
   }
-  const banner=document.getElementById('fb-err-banner');
-  if(banner) banner.style.display=state==='err'?'flex':'none';
+  const banner = document.getElementById('fb-err-banner');
+  if(banner) banner.style.display = state==='err' ? 'flex' : 'none';
 }
 
 
@@ -675,6 +753,10 @@ function doLogin(){
     document.getElementById('main-layout').style.display='flex';
     try{localStorage.setItem('bk_admin_session','1');}catch(e){}
     initDash();
+    // Request browser notification permission
+    if(Notification.permission==='default') Notification.requestPermission();
+    // Start real-time listener
+    startRealtime();
   } else {
     const lc=document.querySelector('.lcard');
     lc.style.animation='shk .3s ease';setTimeout(()=>lc.style.animation='',400);
@@ -692,7 +774,10 @@ document.addEventListener('DOMContentLoaded',async ()=>{
   document.head.insertAdjacentHTML('beforeend','<style>@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}</style>');
   updateCloudStatus('...');
   await cloudPull();
-  setInterval(cloudPull, 15000);
+  // Start real-time SSE listener instead of polling
+  startRealtime();
+  // Also poll every 30s as fallback
+  setInterval(cloudPull, 30000);
   try{
     if(localStorage.getItem('bk_admin_session')==='1'){
       document.getElementById('login-page').style.display='none';
