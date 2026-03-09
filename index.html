@@ -246,10 +246,11 @@ select.fi option{background:var(--card);color:var(--text)}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
   .t-search{display:none}
   .img4-grid{grid-template-columns:repeat(2,1fr)}
-  .sel-t,.prod-t,.ord-t,.msg-t{grid-template-columns:auto}
+  .sel-t,.prod-t,.ord-t,.msg-t{grid-template-columns:1fr!important}
   .fab-add{display:flex}
   .tbl-hd{display:none}
-  .tbl-row{padding:12px 14px;cursor:pointer}
+  .tbl-row{padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+  .tbl-row .tc{white-space:normal}
   .mob-hide{display:none!important}
   .mob-only{display:block!important}
 }
@@ -257,7 +258,9 @@ select.fi option{background:var(--card);color:var(--text)}
   .stats-grid{grid-template-columns:1fr 1fr}
   .frow{grid-template-columns:1fr}
   .card-grid{grid-template-columns:1fr}
-  .lcard{padding:28px 20px}
+  .lcard{padding:22px 16px;margin:0 8px}
+  .img4-grid{grid-template-columns:1fr 1fr}
+  .topbar-left{font-size:.85rem}
 }
 @media(max-width:900px){
   /* overlay: no padding so modal can use full height */
@@ -281,6 +284,12 @@ select.fi option{background:var(--card);color:var(--text)}
 <body>
 
 <div class="toast" id="toast"></div>
+
+<!-- ─── FIREBASE ERROR BANNER ─── -->
+<div id="fb-err-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9998;background:#ef4444;color:#fff;text-align:center;padding:10px 16px;font-size:.82rem;font-weight:700;gap:10px;align-items:center;justify-content:center">
+  ⚠️ Firebase پەیوەندی نییە — دڵنیابەرەوە کە Rules: <code style="background:rgba(0,0,0,.2);padding:2px 6px;border-radius:4px">".read":true,".write":true</code> نوشتراوە
+  <button onclick="document.getElementById('fb-err-banner').style.display='none'" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:3px 8px;cursor:pointer;font-family:inherit;font-size:.78rem">✕</button>
+</div>
 
 <!-- ─── LOGIN ─── -->
 <div class="login-page" id="login-page">
@@ -341,6 +350,7 @@ select.fi option{background:var(--card);color:var(--text)}
         <span id="pg-title">داشبۆرد</span>
       </div>
       <div class="topbar-right">
+        <button onclick="cloudPull().then(ok=>toast2(ok?'✓ نوێکرایەوە':'⚠️ پەیوەندی نییە',ok?'s':'e'))" style="background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;color:var(--text2);font-family:inherit;font-size:.82rem;padding:7px 11px;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap" title="نوێکردنەوە">🔄 <span class="mob-hide">نوێ</span></button>
         <div class="t-search"><span style="color:var(--text3)">🔍</span><input type="text" placeholder="گەڕان..." id="main-srch" oninput="mainSearch(this.value)"></div>
       </div>
     </div>
@@ -594,15 +604,22 @@ let _pushBusy = false;
 async function cloudPull(){
   try{
     const r = await fetch(FB_URL+'/data.json');
-    if(!r.ok) return false;
+    if(!r.ok){ updateCloudStatus('err'); return false; }
     const data = await r.json();
-    if(!data) return true;
-    CLOUD_KEYS_ALL.forEach(k=>{
-      if(data[k]!==undefined){try{localStorage.setItem(k,JSON.stringify(data[k]));}catch(e){}}
-    });
     updateCloudStatus('ok');
+    if(!data) return true;
+    let changed = false;
+    CLOUD_KEYS_ALL.forEach(k=>{
+      if(data[k]!==undefined){
+        const cur = localStorage.getItem(k);
+        const nw = JSON.stringify(data[k]);
+        if(cur !== nw){ localStorage.setItem(k, nw); changed = true; }
+      }
+    });
+    // Re-render active page
+    if(changed && typeof refresh==='function') refresh();
     return true;
-  }catch(e){updateCloudStatus('err');return false;}
+  }catch(e){ updateCloudStatus('err'); return false; }
 }
 
 async function cloudPush(){
@@ -630,9 +647,12 @@ function schedulePush(){
 
 function updateCloudStatus(state){
   const el=document.getElementById('cloud-status');
-  if(!el) return;
-  el.textContent=state==='ok'?'🔥 Firebase چالاکە':state==='err'?'⚠️ هەڵەی پەیوەندی':'...';
-  el.style.color=state==='ok'?'var(--green)':state==='err'?'var(--red)':'var(--text2)';
+  if(el){
+    el.textContent=state==='ok'?'🔥 Firebase چالاکە':state==='err'?'⚠️ هەڵەی پەیوەندی':'...';
+    el.style.color=state==='ok'?'var(--green)':state==='err'?'var(--red)':'var(--text2)';
+  }
+  const banner=document.getElementById('fb-err-banner');
+  if(banner) banner.style.display=state==='err'?'flex':'none';
 }
 
 
