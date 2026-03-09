@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>پانێلی ئەدمین — بازاڕی کوردستان</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -18,7 +19,7 @@
   --r:16px;--r2:13px;--r3:10px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{font-family:'Noto Sans Arabic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;overflow-x:hidden}
+html,body{font-family:'Vazirmatn','Noto Sans Arabic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:rgba(234,179,8,.2);border-radius:4px}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 10%,rgba(234,179,8,.04) 0%,transparent 50%);pointer-events:none;z-index:0}
 
@@ -34,11 +35,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .s-nav{flex:1;padding:10px 8px}
 .s-sec{margin-bottom:18px}
 .s-lbl{font-size:.62rem;font-weight:700;color:var(--text3);padding:0 8px;margin-bottom:5px;letter-spacing:.5px}
-.ni{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:11px;cursor:pointer;transition:all .2s;margin-bottom:2px;color:var(--text2);font-size:.84rem;font-weight:500;position:relative;-webkit-user-select:none}
-.ni:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:13px;cursor:pointer;transition:all .2s;margin-bottom:2px;color:var(--text2);font-size:.87rem;font-weight:600;position:relative;-webkit-user-select:none}
+.ni:hover{background:rgba(255,255,255,.05);color:var(--text)}
 .ni.active{background:rgba(234,179,8,.1);color:var(--gold)}
-.ni.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--grad);border-radius:0 3px 3px 0}
-.ni-icon{font-size:1rem;width:18px;text-align:center;flex-shrink:0}
+.ni.active .ni-icon{filter:drop-shadow(0 1px 4px rgba(234,179,8,.5))}
+.ni.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--grad);border-radius:0 3px 3px 0}
+.ni-icon{font-size:1.1rem;width:20px;text-align:center;flex-shrink:0}
 .ni-badge{margin-right:auto;font-size:.62rem;font-weight:700;padding:2px 6px;border-radius:50px;min-width:18px;text-align:center}
 .nb-red{background:var(--red);color:#fff}
 .nb-gold{background:rgba(234,179,8,.15);color:var(--gold);border:1px solid rgba(234,179,8,.3)}
@@ -71,14 +73,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .sc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;transition:all .22s}
 .sc:hover{border-color:rgba(234,179,8,.2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3)}
 .sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.sc-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.sc-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
 .i-g{background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.2)}
 .i-gr{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.2)}
 .i-b{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.2)}
 .i-o{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.2)}
 .sc-delta{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:50px}
 .d-up{background:rgba(16,185,129,.1);color:var(--green)}
-.sc-num{font-size:1.7rem;font-weight:900;line-height:1;margin-bottom:3px}
+.sc-num{font-size:1.9rem;font-weight:900;line-height:1;margin-bottom:3px;letter-spacing:-1px}
 .sc-lbl{font-size:.74rem;color:var(--text2)}
 
 /* ─── SECTION HEAD ─── */
@@ -211,12 +213,13 @@ select.fi option{background:var(--card);color:var(--text)}
 .lcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
 
 /* ─── MOBILE BOTTOM NAV (hidden on desktop) ─── */
-.mob-bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bot-h);background:rgba(6,8,16,.96);backdrop-filter:blur(20px);border-top:1px solid var(--border);z-index:400;align-items:center;justify-content:space-around;padding:0 4px;padding-bottom:env(safe-area-inset-bottom,0)}
-.mbn-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 10px;border-radius:10px;transition:all .2s;flex:1;max-width:65px;position:relative}
-.mbn-item.active{background:rgba(234,179,8,.08)}
-.mbn-icon{font-size:1.15rem;color:var(--text3);transition:color .2s}
-.mbn-lbl{font-size:.6rem;font-weight:600;color:var(--text3);transition:color .2s;text-align:center}
-.mbn-item.active .mbn-icon,.mbn-item.active .mbn-lbl{color:var(--gold)}
+.mob-bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bot-h);background:rgba(6,8,16,.97);backdrop-filter:blur(24px);border-top:1px solid var(--border);z-index:400;align-items:center;justify-content:space-around;padding:0 4px;padding-bottom:env(safe-area-inset-bottom,0)}
+.mbn-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 12px;border-radius:14px;transition:all .25s;flex:1;max-width:68px;position:relative}
+.mbn-item.active{background:rgba(234,179,8,.1)}
+.mbn-icon{font-size:1.35rem;color:var(--text3);transition:all .25s;filter:grayscale(1) opacity(.5)}
+.mbn-lbl{font-size:.6rem;font-weight:700;color:var(--text3);transition:color .2s;text-align:center;letter-spacing:-.2px}
+.mbn-item.active .mbn-icon{color:var(--gold);filter:none;transform:translateY(-2px);filter:drop-shadow(0 2px 6px rgba(234,179,8,.5))}
+.mbn-item.active .mbn-lbl{color:var(--gold)}
 .mbn-dot{position:absolute;top:4px;right:9px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--bg);display:none}
 
 /* ─── SIDEBAR OVERLAY (mobile) ─── */
