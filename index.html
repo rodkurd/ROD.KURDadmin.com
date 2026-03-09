@@ -57,6 +57,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .t-search input{background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:.82rem;width:160px;direction:rtl}
 .t-search input::placeholder{color:var(--text3)}
 /* Mobile toggle */
+.fab-add{display:none;position:fixed;bottom:80px;left:16px;z-index:399;width:52px;height:52px;border-radius:50%;background:var(--grad);color:#000;font-size:1.4rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(240,165,0,.4);align-items:center;justify-content:center;transition:all .2s}
+.fab-add:active{transform:scale(.92)}
+.mob-hide{display:table-cell}
+.mob-only{display:none}
 .mob-toggle{display:none;width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:9px;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;flex-shrink:0}
 
 .content{flex:1;padding:20px;overflow-y:auto}
@@ -122,7 +126,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);z-index:1000;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
 .overlay.active{display:flex;animation:fdi .25s ease}
 @keyframes fdi{from{opacity:0}to{opacity:1}}
-.modal{background:var(--card);border:1px solid rgba(240,165,0,.15);border-radius:20px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;animation:pu .3s cubic-bezier(.34,1.2,.64,1);scrollbar-width:thin;scrollbar-color:var(--gold) transparent;margin:auto}
+.modal{background:var(--card);border:1px solid rgba(240,165,0,.15);border-radius:20px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;animation:pu .3s cubic-bezier(.34,1.2,.64,1);scrollbar-width:thin;scrollbar-color:var(--gold) transparent;margin:auto;-webkit-overflow-scrolling:touch}
 @keyframes pu{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
 .mh{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--card);z-index:10;border-radius:20px 20px 0 0}
 .mh-title{font-size:1rem;font-weight:800}
@@ -156,7 +160,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* ─── FORM ─── */
 .fg{margin-bottom:12px}
 .fl{display:block;font-size:.78rem;font-weight:600;color:var(--text2);margin-bottom:6px}
-.fi{width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r3);color:var(--text);font-family:inherit;font-size:.86rem;outline:none;transition:all .3s;direction:rtl}
+.fi{width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r3);color:var(--text);font-family:inherit;font-size:16px;outline:none;transition:all .3s;direction:rtl;-webkit-appearance:none;appearance:none}
 .fi:focus{border-color:var(--gold);background:rgba(240,165,0,.04);box-shadow:0 0 0 3px rgba(240,165,0,.08)}
 .fi::placeholder{color:var(--text3)}
 textarea.fi{min-height:80px;resize:vertical}
@@ -243,12 +247,31 @@ select.fi option{background:var(--card);color:var(--text)}
   .t-search{display:none}
   .img4-grid{grid-template-columns:repeat(2,1fr)}
   .sel-t,.prod-t,.ord-t,.msg-t{grid-template-columns:auto}
+  .fab-add{display:flex}
+  .tbl-hd{display:none}
+  .tbl-row{padding:12px 14px;cursor:pointer}
+  .mob-hide{display:none!important}
+  .mob-only{display:block!important}
 }
 @media(max-width:600px){
   .stats-grid{grid-template-columns:1fr 1fr}
   .frow{grid-template-columns:1fr}
   .card-grid{grid-template-columns:1fr}
   .lcard{padding:28px 20px}
+}
+@media(max-width:900px){
+  /* overlay: no padding so modal can use full height */
+  .overlay{padding:0;align-items:flex-end}
+  .modal{border-radius:20px 20px 0 0;max-height:90vh;max-width:100%}
+  .mh{border-radius:20px 20px 0 0}
+  /* messages page: stack columns */
+  #pg-messages .msg-grid-wrap{grid-template-columns:1fr!important}
+  /* settings page: stack columns */
+  #pg-settings .settings-grid-wrap{grid-template-columns:1fr!important}
+  /* cloud card: full width */
+  #pg-settings .cloud-wrap{grid-column:1}
+  /* table wrapper horizontal scroll */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 }
 @media(min-width:901px){
   .mob-bot-nav{display:none!important}
@@ -388,7 +411,7 @@ select.fi option{background:var(--card);color:var(--text)}
 
       <!-- ═══ MESSAGES ═══ -->
       <div class="pg" id="pg-messages">
-        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px">
+        <div class="msg-grid-wrap" style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px">
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
             <h3 style="font-size:.92rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:7px">✉️ نامەی نوێ بنێرە</h3>
             <div style="display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap">
@@ -409,7 +432,7 @@ select.fi option{background:var(--card);color:var(--text)}
 
       <!-- ═══ SETTINGS ═══ -->
       <div class="pg" id="pg-settings">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div class="settings-grid-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
             <h3 style="font-size:.92rem;font-weight:700;margin-bottom:16px">⚙️ ڕێکخستنەکانی گشتی</h3>
             <div class="fg"><label class="fl">ناوی پلاتفۆرم</label><input class="fi" value="بازاڕی کوردستان"></div>
@@ -460,6 +483,7 @@ select.fi option{background:var(--card);color:var(--text)}
   </div><!-- /main -->
 
   <!-- ─── MOBILE BOTTOM NAV ─── -->
+  <button class="fab-add" id="fab-add" onclick="fabAction()" title="زیادکردن">+</button>
   <nav class="mob-bot-nav">
     <div class="mbn-item active" id="mbn-dash" onclick="goPg('pg-dash',null,'📊','داشبۆرد');setMbn('mbn-dash')"><div class="mbn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div><div class="mbn-lbl">داشبۆرد</div></div>
     <div class="mbn-item" id="mbn-sell" onclick="goPg('pg-sellers',null,'👥','فرۆشیارەکان');setMbn('mbn-sell')">
@@ -752,6 +776,21 @@ function goPg(id,navEl,icon,title){
   if(id==='pg-products') renderProds();
   if(id==='pg-orders') renderOrders();
   if(id==='pg-messages'){renderRecipients();renderSentMsgs();}
+  setTimeout(updateFab,100);
+}
+function fabAction(){
+  const active=document.querySelector('.pg.active');
+  if(!active) return;
+  if(active.id==='pg-products') openAddProd();
+  else if(active.id==='pg-messages') document.getElementById('msg-subj')&&document.getElementById('msg-subj').focus();
+}
+function updateFab(){
+  const fab=document.getElementById('fab-add');
+  if(!fab) return;
+  const active=document.querySelector('.pg.active');
+  if(!active){fab.style.display='none';return;}
+  if(active.id==='pg-products'){fab.style.display='flex';fab.textContent='+';}
+  else{fab.style.display='none';}
 }
 function setMbn(id){document.querySelectorAll('.mbn-item').forEach(m=>m.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
@@ -997,20 +1036,24 @@ function renderProds(list){
   el.innerHTML=list.map(p=>{
     const imgs=(p.images||[]).filter(Boolean);
     const thumbs=imgs.slice(0,3).map(img=>`<img src="${img}" style="width:22px;height:22px;border-radius:5px;object-fit:cover;border:1px solid var(--border)">`).join('');
-    return `<div class="tbl-row prod-t">
+    return `<div class="tbl-row prod-t" onclick="openEditProd('${p.id}')">
       <div class="tc"><div class="av-row">
         <div style="width:38px;height:38px;border-radius:8px;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#131928,#0d1117);display:flex;align-items:center;justify-content:center">
           ${imgs[0]?`<img src="${imgs[0]}" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:1.3rem">${p.em||'📦'}</span>`}
         </div>
-        <div style="min-width:0"><div style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>${p.badge?`<span class="badge b-new" style="margin-top:2px">${p.badge}</span>`:''}</div>
+        <div style="min-width:0">
+          <div style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
+          <div style="font-size:.72rem;color:var(--text2)">${p.cat}</div>
+          <div style="font-size:.75rem;color:var(--gold);font-weight:600;display:none" class="mob-only">${fp(p.price)} — زیادکردن: ${fp(p.max||0)}</div>
+        </div>
       </div></div>
-      <div class="tc"><span class="badge b-new">${p.cat}</span></div>
-      <div class="tc g">${(p.price||0).toLocaleString('ar-IQ')}</div>
-      <div class="tc"><div style="display:flex;gap:4px;align-items:center">${thumbs||'<span style="color:var(--text3);font-size:.72rem">بێ وێنە</span>'}<span style="font-size:.68rem;color:var(--text3)">${imgs.length>0?imgs.length+'/٤':''}</span></div></div>
-      <div class="tc"><div class="abtns">
-        <button class="ab ao" onclick="openEditProd('${p.id}')">✏️ گۆڕین</button>
+      <div class="tc mob-hide">${p.cat}</div>
+      <div class="tc mob-hide" style="color:var(--gold);font-weight:700">${fp(p.price)}</div>
+      <div class="tc mob-hide">${imgs.filter(Boolean).length} وێنە</div>
+      <div class="tc" onclick="event.stopPropagation()">
+        <button class="ab ag2" onclick="openEditProd('${p.id}')">✏️</button>
         <button class="ab ar" onclick="deleteProd('${p.id}')">🗑</button>
-      </div></div>
+      </div>
     </div>`;
   }).join('');
 }
