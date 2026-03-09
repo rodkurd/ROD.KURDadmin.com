@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<style id="mobileBlock" style="display:none"></style>
 <title>کوردمارت — پانێلی ئەدمین</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -171,6 +172,16 @@ html,body{height:100%;overflow-x:hidden;background:var(--bg);color:var(--t1);fon
 </style>
 </head>
 <body>
+
+<!-- MOBILE BLOCK -->
+<div id="mobileWarn" style="display:none;position:fixed;inset:0;z-index:9999;background:#09090e;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:32px;font-family:'Noto Naskh Arabic',serif">
+  <div style="font-size:64px;margin-bottom:20px">🖥️</div>
+  <div style="font-size:22px;font-weight:700;color:#f0a500;margin-bottom:12px">تەنها لەسەر کۆمپیوتەر</div>
+  <div style="font-size:14px;color:#9d99a0;line-height:1.8;max-width:300px">پانێلی ئەدمین تەنها بۆ دیسکتۆپ و لاپتۆپ دروستکراوە.<br>تکایە لەسەر کۆمپیوتەرێک بیکەرەوە.</div>
+  <div style="margin-top:28px;background:#18181f;border:1px solid rgba(240,165,0,.2);border-radius:12px;padding:16px 24px;color:#5a5760;font-size:12px">
+    پانێلی ئەدمین — کوردمارت
+  </div>
+</div>
 
 <!-- LOGIN -->
 <div class="login-ov" id="loginOv">
@@ -769,14 +780,32 @@ function sendMsg() {
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
-if(loadAdminSession()) {
-  adminLoggedIn = true;
-  el('loginOv').style.display = 'none';
-  el('topnav').style.display = 'flex';
-  el('mainApp').style.display = 'block';
-  el('botnav').style.display = 'flex';
-  const savedTab = localStorage.getItem('km_admin_tab') || 'dash';
-  setTab(savedTab);
+
+// ── دیسکتۆپ تەنها ──
+function checkDevice() {
+  const isMobile = window.innerWidth < 1024 || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  el('mobileWarn').style.display = isMobile ? 'flex' : 'none';
+  if(isMobile) {
+    el('loginOv').style.display = 'none';
+    el('topnav').style.display = 'none';
+    el('mainApp').style.display = 'none';
+    el('botnav').style.display = 'none';
+  }
+  return isMobile;
+}
+window.addEventListener('resize', checkDevice);
+const onMobile = checkDevice();
+
+if(!onMobile) {
+  if(loadAdminSession()) {
+    adminLoggedIn = true;
+    el('loginOv').style.display = 'none';
+    el('topnav').style.display = 'flex';
+    el('mainApp').style.display = 'block';
+    el('botnav').style.display = 'flex';
+    const savedTab = localStorage.getItem('km_admin_tab') || 'dash';
+    setTab(savedTab);
+  }
 }
 updatePendingBadge();
 </script>
