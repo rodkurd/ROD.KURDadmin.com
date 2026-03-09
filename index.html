@@ -409,7 +409,7 @@ select.fi option{background:var(--card);color:var(--text)}
 
       <!-- ═══ SETTINGS ═══ -->
       <div class="pg" id="pg-settings">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
             <h3 style="font-size:.92rem;font-weight:700;margin-bottom:16px">⚙️ ڕێکخستنەکانی گشتی</h3>
             <div class="fg"><label class="fl">ناوی پلاتفۆرم</label><input class="fi" value="بازاڕی کوردستان"></div>
@@ -423,6 +423,35 @@ select.fi option{background:var(--card);color:var(--text)}
             <div class="fg"><label class="fl">وشەی تێپەڕینی نوێ</label><input class="fi" type="password" placeholder="••••••••"></div>
             <div class="fg"><label class="fl">دووبارە نوێ</label><input class="fi" type="password" placeholder="••••••••"></div>
             <button class="btn btn-gold" style="margin-top:4px" onclick="toast2('✓ وشەی تێپەڕین گۆڕدرا','s')">گۆڕین</button>
+          </div>
+        </div>
+        <!-- CLOUD SYNC CARD -->
+        <div style="background:var(--card);border:1px solid rgba(59,130,246,.3);border-radius:var(--r);padding:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <h3 style="font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:7px">☁️ هاوکاری ئەبری <span style="font-size:.7rem;background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.3);border-radius:6px;padding:2px 7px;font-weight:600">JSONBin.io</span></h3>
+            <span id="cloud-status" style="font-size:.75rem;color:var(--text2)">ڕێکنەخراوە</span>
+          </div>
+          <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:11px 13px;margin-bottom:14px;font-size:.77rem;color:var(--text2);line-height:1.7">
+            📋 بۆ چالاک کردن:<br>
+            ١. سەردانی <strong style="color:#60a5fa">jsonbin.io</strong> بکە → ئەکاونتی بەپووچ دروست بکە<br>
+            ٢. Master Key بکۆپیرەوە لە بەشی API Keys<br>
+            ٣. Bin نوێ دروست بکە (New Bin) — ناوەرۆکی پووچ بدە: <code style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px">{}</code><br>
+            ٤. Bin ID بکۆپیرەوە لە URL بار
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+            <div class="fg" style="margin:0"><label class="fl">🔑 Master Key</label><input class="fi" id="cl-key" type="password" placeholder="$2a$10$..."></div>
+            <div class="fg" style="margin:0"><label class="fl">🗂 Bin ID</label><input class="fi" id="cl-bin" placeholder="64abc..."></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:14px">
+            <button class="btn btn-outline" style="flex:1;padding:9px" onclick="testCloudCfg()">🧪 تستی کردن</button>
+            <button class="btn btn-gold" style="flex:1;padding:9px" onclick="saveCloudCfg()">✓ چالاک کردن و پاشەکەوت</button>
+          </div>
+          <div id="sync-code-box" style="display:none;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:12px">
+            <div style="font-size:.75rem;font-weight:700;color:var(--green);margin-bottom:7px">✓ کۆدی هاوکاری بۆ مۆبایل — بدەیە ئامێری تر</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div id="sync-code-display" style="flex:1;background:rgba(0,0,0,.3);border-radius:7px;padding:8px 10px;font-size:.65rem;color:var(--text2);word-break:break-all;font-family:monospace"></div>
+              <button class="btn btn-gold" style="padding:8px 12px;font-size:.75rem;white-space:nowrap" onclick="copySyncCode()">📋 کۆپی</button>
+            </div>
           </div>
         </div>
       </div>
@@ -543,8 +572,107 @@ select.fi option{background:var(--card);color:var(--text)}
 <script>
 // ── STORAGE ──
 const KS='bk_sellers',KP='bk_products',KO='bk_orders',KM='bk_messages';
+
+// ═══════════════════════════════════════
+// ☁️ CLOUD SYNC — JSONBin.io
+// ═══════════════════════════════════════
+const CLOUD_KEYS_ALL = ['bk_sellers','bk_products','bk_orders','bk_messages'];
+let _cloudPushTimer = null;
+let _cloudBusy = false;
+
+function cloudCfg(){
+  try{const s=localStorage.getItem('bk_cloud_cfg');return s?JSON.parse(s):null;}catch(e){return null;}
+}
+function cloudSaveCfg(key,bin){
+  try{localStorage.setItem('bk_cloud_cfg',JSON.stringify({key,bin}));}catch(e){}
+}
+
+async function cloudPull(){
+  const cfg=cloudCfg();
+  if(!cfg||!cfg.key||!cfg.bin) return false;
+  try{
+    const r=await fetch(`https://api.jsonbin.io/v3/b/${cfg.bin}/latest`,{
+      headers:{'X-Master-Key':cfg.key,'X-Bin-Meta':'false'}
+    });
+    if(!r.ok) return false;
+    const data=await r.json();
+    CLOUD_KEYS_ALL.forEach(k=>{
+      if(data[k]!==undefined){try{localStorage.setItem(k,JSON.stringify(data[k]));}catch(e){}}
+    });
+    return true;
+  }catch(e){return false;}
+}
+
+async function cloudPush(){
+  const cfg=cloudCfg();
+  if(!cfg||!cfg.key||!cfg.bin||_cloudBusy) return;
+  _cloudBusy=true;
+  const data={};
+  CLOUD_KEYS_ALL.forEach(k=>{
+    try{data[k]=JSON.parse(localStorage.getItem(k)||'[]');}catch(e){data[k]=[];}
+  });
+  try{
+    await fetch(`https://api.jsonbin.io/v3/b/${cfg.bin}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':cfg.key},
+      body:JSON.stringify(data)
+    });
+    updateCloudStatus('ok');
+  }catch(e){updateCloudStatus('err');}
+  _cloudBusy=false;
+}
+
+function schedulePush(){
+  if(!cloudCfg()) return;
+  clearTimeout(_cloudPushTimer);
+  _cloudPushTimer=setTimeout(cloudPush,900);
+}
+
+function updateCloudStatus(state){
+  const el=document.getElementById('cloud-status');
+  if(!el) return;
+  el.textContent=state==='ok'?'☁️ هاوکاری چالاکە':state==='err'?'⚠️ هەڵەی هاوکاری':'...';
+  el.style.color=state==='ok'?'var(--green)':state==='err'?'var(--red)':'var(--text2)';
+}
+
+function encodeSyncCode(key,bin){return btoa(JSON.stringify({key,bin}));}
+
+async function testCloudCfg(){
+  const key=document.getElementById('cl-key').value.trim();
+  const bin=document.getElementById('cl-bin').value.trim();
+  if(!key||!bin){toast2('⚠️ کلیل و ID ی bin پڕ بکەرەوە','w');return;}
+  toast2('...تستی کردن','i');
+  try{
+    const r=await fetch(`https://api.jsonbin.io/v3/b/${bin}/latest`,{
+      headers:{'X-Master-Key':key,'X-Bin-Meta':'false'}
+    });
+    if(r.ok){ toast2('✓ پەیوەندی سەرکەوتوو بوو!','s'); }
+    else{ toast2('❌ پەیوەندی سەرکەوت نەبوو — کلیل یان ID هەڵەیە','e'); }
+  }catch(e){ toast2('❌ هەڵەی تور','e'); }
+}
+
+async function saveCloudCfg(){
+  const key=document.getElementById('cl-key').value.trim();
+  const bin=document.getElementById('cl-bin').value.trim();
+  if(!key||!bin){toast2('⚠️ کلیل و ID ی bin پڕ بکەرەوە','w');return;}
+  cloudSaveCfg(key,bin);
+  // Push current data to cloud
+  await cloudPush();
+  // Show sync code
+  const code=encodeSyncCode(key,bin);
+  document.getElementById('sync-code-display').textContent=code;
+  document.getElementById('sync-code-box').style.display='block';
+  toast2('✓ هاوکاری ئەبری چالاک بوو!','s');
+  updateCloudStatus('ok');
+}
+
+function copySyncCode(){
+  const code=document.getElementById('sync-code-display').textContent;
+  navigator.clipboard.writeText(code).then(()=>toast2('✓ کۆدەکە کۆپی کرا','s'));
+}
+
 const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}};
-const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} schedulePush()};
 const gS=()=>ld(KS,[]);
 const gP=()=>ld(KP,[]);
 const gO=()=>ld(KO,[]);
@@ -575,13 +703,32 @@ function doLogout(){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('login-page').style.display!=='none')doLogin();});
 // Restore admin session on load
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded',async ()=>{
   document.head.insertAdjacentHTML('beforeend','<style>@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}</style>');
+  // Pull cloud data first
+  if(cloudCfg()){
+    await cloudPull();
+    setInterval(cloudPull, 12000);
+    updateCloudStatus('ok');
+  }
   try{
     if(localStorage.getItem('bk_admin_session')==='1'){
       document.getElementById('login-page').style.display='none';
       document.getElementById('main-layout').style.display='flex';
       initDash();
+      // Pre-fill cloud settings if configured
+      const cfg=cloudCfg();
+      if(cfg){
+        const ki=document.getElementById('cl-key');
+        const bi=document.getElementById('cl-bin');
+        if(ki)ki.value=cfg.key||'';
+        if(bi)bi.value=cfg.bin||'';
+        const code=encodeSyncCode(cfg.key,cfg.bin);
+        const cd=document.getElementById('sync-code-display');
+        const cb=document.getElementById('sync-code-box');
+        if(cd)cd.textContent=code;
+        if(cb)cb.style.display='block';
+      }
     }
   }catch(e){}
 });
